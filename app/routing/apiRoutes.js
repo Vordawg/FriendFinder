@@ -1,5 +1,15 @@
 const friendData = require('../data/friends');
 
+function getScores(objectArray) {
+    let friendScore = 0;
+
+    objectArray.forEach(function (score) {
+        friendScore += parseInt(score);
+    });
+
+    return friendScore;
+}
+
 module.exports = (app) => {
 
     app.get('/api/friends', (req, res) => {
@@ -12,23 +22,18 @@ module.exports = (app) => {
         var bestFriendScore = 0;
         var bestFriend = -1;
 
-        req.body.scores.forEach(function (score) {
-            newFriendDataScore += parseInt(score);
-        });
-
-        friendData[0].scores.forEach(function (score) {
-            bestFriendScore += parseInt(score);
-        });
+        newFriendDataScore = getScores(req.body.scores);
+        bestFriendScore = getScores(friendData[0].scores);
 
         totalDifference = Math.abs(newFriendDataScore - bestFriendScore);
         bestFriend = 0;
 
         for (var loop = 1; loop < friendData.length; loop++) {
-            friendData[loop].scores.forEach(function (score) {
-                bestFriendScore += parseInt(score);
-            });
+
+            bestFriendScore = getScores(friendData[loop].scores);
 
             var tempDifference = Math.abs(newFriendDataScore - bestFriendScore);
+
             if (totalDifference > tempDifference) {
                 totalDifference = tempDifference;
                 bestFriend = loop;
